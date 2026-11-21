@@ -56,7 +56,7 @@ jobs:
           test -s work/release-0.1.apk
           test -s tools/baksmali.jar
           test -s tools/smali.jar
-          unzip -l work/release-0.1.apk | grep -E 'classes([0-9]+)?\\.dex'
+          unzip -l work/release-0.1.apk | grep -E 'classes([0-9]+)?\.dex'
 
       - name: Compile only the touch overlay Java classes
         run: |
