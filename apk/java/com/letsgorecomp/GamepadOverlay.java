@@ -20,6 +20,7 @@ public class GamepadOverlay extends FrameLayout {
     private final Activity activity;
     private android.widget.TextView fpsView;
     private final android.os.Handler fpsHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private TouchLayoutEditor touchLayoutEditor;
 
     public GamepadOverlay(Activity activity) {
         super(activity);
@@ -27,7 +28,13 @@ public class GamepadOverlay extends FrameLayout {
         setLayoutParams(new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         build();
+        touchLayoutEditor = new TouchLayoutEditor(this, activity, 5);
         startFpsUpdater();
+    }
+
+    @Override public boolean dispatchTouchEvent(MotionEvent event) {
+        if (touchLayoutEditor != null && touchLayoutEditor.onTouchEvent(event)) return true;
+        return super.dispatchTouchEvent(event);
     }
 
     private void startFpsUpdater() {
