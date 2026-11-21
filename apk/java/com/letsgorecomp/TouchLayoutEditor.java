@@ -136,8 +136,10 @@ final class TouchLayoutEditor {
         if (action == MotionEvent.ACTION_POINTER_UP) {
             pinchStartDistance = 0.0f;
             if (selected >= 0 && event.getPointerCount() > 1) {
-                downX = event.getX(0);
-                downY = event.getY(0);
+                int lifted = event.getActionIndex();
+                int remaining = lifted == 0 ? 1 : 0;
+                downX = event.getX(remaining);
+                downY = event.getY(remaining);
                 startTranslationX = controls[selected].getTranslationX();
                 startTranslationY = controls[selected].getTranslationY();
             }
@@ -233,11 +235,12 @@ final class TouchLayoutEditor {
         for (int i = controls.length - 1; i >= 0; i--) {
             View v = controls[i];
             if (v.getVisibility() != View.VISIBLE) continue;
-            float left = v.getLeft() + v.getTranslationX();
-            float top = v.getTop() + v.getTranslationY();
-            float width = v.getWidth() * v.getScaleX();
-            float height = v.getHeight() * v.getScaleY();
-            if (x >= left && x <= left + width && y >= top && y <= top + height) return i;
+            float centerX = v.getLeft() + v.getWidth() / 2.0f + v.getTranslationX();
+            float centerY = v.getTop() + v.getHeight() / 2.0f + v.getTranslationY();
+            float halfWidth = v.getWidth() * v.getScaleX() / 2.0f;
+            float halfHeight = v.getHeight() * v.getScaleY() / 2.0f;
+            if (x >= centerX - halfWidth && x <= centerX + halfWidth
+                    && y >= centerY - halfHeight && y <= centerY + halfHeight) return i;
         }
         return -1;
     }
