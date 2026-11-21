@@ -135,7 +135,7 @@ final class TouchLayoutEditor {
 
         if (action == MotionEvent.ACTION_POINTER_UP) {
             pinchStartDistance = 0.0f;
-            if (event.getPointerCount() > 1) {
+            if (selected >= 0 && event.getPointerCount() > 1) {
                 downX = event.getX(0);
                 downY = event.getY(0);
                 startTranslationX = controls[selected].getTranslationX();
