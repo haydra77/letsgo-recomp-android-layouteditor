@@ -111,15 +111,28 @@ jobs:
 
       - name: Repackage APK and sign
         run: |
-          mkdir -p work/unpacked
-          unzip -q work/release-0.1.apk -d work/unpacked
-          cp work/patched-classes.dex work/unpacked/classes.dex
-          rm -f work/unpacked/META-INF/*.RSA work/unpacked/META-INF/*.DSA \
-                work/unpacked/META-INF/*.EC work/unpacked/META-INF/*.SF \
-                work/unpacked/META-INF/*.MF
-          (cd work/unpacked && zip -X -q -r ../unsigned.apk .)
+          # Patch the original ZIP in place. Do not extract/recompress every entry:
+          # Release 0.1 may rely on uncompressed/aligned native libraries for installation.
+          cp work/release-0.1.apk work/unsigned.apk
+          zip -q -d work/unsigned.apk classes.dex 'META-INF/*'
+          mkdir -p work/replacement
+          cp work/patched-classes.dex work/replacement/classes.dex
+          (cd work/replacement && zip -0 -q ../unsigned.apk classes.dex)
           "$ANDROID_HOME/build-tools/35.0.0/zipalign" -f -p 4 \
             work/unsigned.apk work/aligned.apk
+          # Fail early if any native library was accidentally compressed.
+          python3 - <<'PY'
+          import zipfile
+          for name in ("work/release-0.1.apk", "work/aligned.apk"):
+              with zipfile.ZipFile(name) as z:
+                  bad = [(i.filename, i.compress_type) for i in z.infolist()
+                         if i.filename.startswith("lib/") and i.filename.endswith(".so")
+                         and i.compress_type != zipfile.ZIP_STORED]
+                  if bad:
+                      raise SystemExit(f"{name}: compressed native libraries: {bad}")
+                  print(name, "native libraries stored:", sum(
+                      1 for i in z.infolist() if i.filename.startswith("lib/") and i.filename.endswith(".so")))
+          PY
           keytool -genkeypair -v \
             -keystore work/layout-editor-release.keystore \
             -storepass "layout-editor-temp-pass" \
