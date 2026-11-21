@@ -48,10 +48,10 @@ jobs:
             "https://github.com/CowKillers/letsgo-recomp-android/releases/download/v0.1/LetsGoLauncher-v0118.apk" \
             -o work/release-0.1.apk
           curl -fL --retry 3 \
-            "https://github.com/baksmali/smali/releases/download/v3.0.10/baksmali-3.0.10-fat-release.jar" \
+            "https://github.com/baksmali/smali/releases/download/3.0.10/baksmali-3.0.10-fat-release.jar" \
             -o tools/baksmali.jar
           curl -fL --retry 3 \
-            "https://github.com/baksmali/smali/releases/download/v3.0.10/smali-3.0.10-fat-release.jar" \
+            "https://github.com/baksmali/smali/releases/download/3.0.10/smali-3.0.10-fat-release.jar" \
             -o tools/smali.jar
           test -s work/release-0.1.apk
           test -s tools/baksmali.jar
