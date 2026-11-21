@@ -284,3 +284,5 @@ final class TouchLayoutEditor {
         return Math.round(value * activity.getResources().getDisplayMetrics().density);
     }
 }
+
+// CI rebuild trigger: keep the Release 0.1 editor patch in sync.
