@@ -285,4 +285,4 @@ final class TouchLayoutEditor {
     }
 }
 
-// CI rebuild trigger: keep the Release 0.1 editor patch in sync.
+// CI rebuild trigger: compile editor against Android API stubs while retaining JDK language classes.
